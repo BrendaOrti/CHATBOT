@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Chatbot Granja Porcina</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+    }
+    .chatbot-container {
+      width: 100%;
+      max-width: 400px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .chat-header {
+      background: linear-gradient(135deg, #4CAF50, #2E7D32);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .chat-header img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 4px solid white;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+    .chat-messages {
+      height: 300px;
+      padding: 15px;
+      overflow-y: auto;
+      background: #fafafa;
+    }
+    .message {
+      margin-bottom: 12px;
+      max-width: 80%;
+      padding: 10px 15px;
+      border-radius: 18px;
+      line-height: 1.4;
+      font-size: 14px;
+    }
+    .user-message {
+      background: #e3f2fd;
+      margin-left: auto;
+      border-bottom-right-radius: 5px;
+    }
+    .bot-message {
+      background: #f1f1f1;
+      margin-right: auto;
+      border-bottom-left-radius: 5px;
+    }
+    .typing-indicator {
+      display: inline-block;
+      padding: 10px 15px;
+      background: #f1f1f1;
+      border-radius: 18px;
+      color: #666;
+      font-style: italic;
+    }
+    .chat-controls {
+      padding: 15px;
+      background: #f9f9f9;
+      border-top: 1px solid #eee;
+    }
+    select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    button:hover {
+      background: #45a049;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="chatbot-container">
+    <div class="chat-header">
+      <img src="https://i.ibb.co/SDTySRYZ/avatar-productor.jpg" alt="Productor Porcino">
+      <h2>Productor Porcino</h2>
+    </div>
+    <div class="chat-messages" id="chat">
+      <div class="message bot-message">¡Bienvenido a mi granja! Comencemos con las preguntas que tienes para mí.</div>
+    </div>
+    <div class="chat-controls">
+      <select id="question-select">
+        <option value="" disabled selected>Selecciona una pregunta</option>
+        <option value='{"p":"¿Existe una planeación reproductiva con respecto a la Inseminación Artificial o Monta Directa?","r":"Sí"}'>Planeación reproductiva (IA/MD)</option>
+        <option value='{"p":"¿Se programa la detección del celo?","r":"Sí"}'>Detección de celo</option>
+        <option value='{"p":"¿Se establece un momento exacto para la IA o MD?","r":"Sí"}'>Momento exacto IA/MD</option>
+        <option value='{"p":"¿Existe una selección para las hembras?","r":"No"}'>Selección de hembras</option>
+        <option value='{"p":"¿El origen de las hembras procede de una casa genética?","r":"No"}'>Origen genético</option>
+        <option value='{"p":"¿Se utiliza alimento balanceado?","r":"Sí"}'>Alimento balanceado</option>
+        <option value='{"p":"¿El alimento proporcionado se da de acuerdo a la etapa productiva de las cerdas?","r":"Sí"}'>Alimento por etapa (cerdas)</option>
+        <option value='{"p":"¿El alimento proporcionado se da de acuerdo a la etapa del lechón?","r":"Sí"}'>Alimento por etapa (lechones)</option>
+        <option value='{"p":"¿Los animales cuentan con agua disponible en todo momento?","r":"Sí"}'>Disponibilidad de agua</option>
+        <option value='{"p":"¿Existe una calidad de agua apropiada?","r":"Sí"}'>Calidad de agua</option>
+        <option value='{"p":"¿La cantidad de agua disponible es adecuada?","r":"Sí"}'>Cantidad de agua</option>
+        <option value='{"p":"¿Los comederos en lactancia permiten que la cerda humedezca su alimento?","r":"Sí"}'>Comederos en lactancia</option>
+        <option value='{"p":"¿Los comederos en servicios y gestación permiten que la cerda humedezca su alimento?","r":"No"}'>Comederos en servicios/gestación</option>
+        <option value='{"p":"¿Las cerdas reproductoras están distribuidas por etapa?","r":"Sí"}'>Distribución por etapa</option>
+        <option value='{"p":"¿Las cerdas reproductoras están distribuidas por área?","r":"Sí"}'>Distribución por área</option>
+        <option value='{"p":"¿Se encuentran en jaula?","r":"Sí"}'>Alojamiento en jaula</option>
+        <option value='{"p":"¿Se encuentran en corral?","r":"No"}'>Alojamiento en corral</option>
+        <option value='{"p":"¿Se controla la temperatura, humedad o ventilación de los espacios donde se encuentran las cerdas?","r":"No"}'>Control ambiental (cerdas)</option>
+        <option value='{"p":"¿Se cuenta con un control de temperatura, humedad y ventilación en donde se encuentran los lechones?","r":"No"}'>Control ambiental (lechones)</option>
+        <option value='{"p":"¿Se tiene una atención al parto?","r":"Sí"}'>Atención al parto</option>
+        <option value='{"p":"¿Se realiza algún tipo de manejo que implique una mutilación (corte de cola, castración, descolmille o muesqueo)?","r":"Sí"}'>Manejo con mutilación</option>
+        <option value='{"p":"¿Se realiza una lactancia mayor a 28 días?","r":"No"}'>Lactancia extendida</option>
+        <option value='{"p":"¿Se cuenta con un programa de bioseguridad?","r":"No"}'>Programa de bioseguridad</option>
+        <option value='{"p":"¿Se cuenta con un programa de vacunación?","r":"Sí"}'>Programa de vacunación</option>
+        <option value='{"p":"¿Se cuenta con un programa de desparasitación?","r":"Sí"}'>Programa de desparasitación</option>
+        <option value='{"p":"¿Se cuenta con un programa de desinfección?","r":"Sí"}'>Programa de desinfección</option>
+        <option value='{"p":"¿Se cuenta con un programa de tratamiento de deshechos?","r":"No"}'>Tratamiento de desechos</option>
+      </select>
+      <button id="ask-button">Preguntar</button>
+    </div>
+  </div>
+
+  <script>
+    const chat = document.getElementById('chat');
+    const questionSelect = document.getElementById('question-select');
+    const askButton = document.getElementById('ask-button');
+
+    function speak(text) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'es-ES';
+        utterance.rate = 0.9;
+        speechSynthesis.speak(utterance);
+      }
+    }
+
+    function addMessage(text, isUser) {
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message');
+      messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+      messageDiv.textContent = text;
+      chat.appendChild(messageDiv);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+      const typingDiv = document.createElement('div');
+      typingDiv.classList.add('typing-indicator');
+      typingDiv.textContent = '...';
+      typingDiv.id = 'typing-indicator';
+      chat.appendChild(typingDiv);
+      chat.scrollTop = chat.scrollHeight;
+      return typingDiv;
+    }
+
+    function hideTypingIndicator() {
+      const typingDiv = document.getElementById('typing-indicator');
+      if (typingDiv) {
+        typingDiv.remove();
+      }
+    }
+
+    askButton.addEventListener('click', () => {
+      const selectedOption = questionSelect.value;
+      if (!selectedOption) return;
+
+      const data = JSON.parse(selectedOption);
+      
+      // Mostrar pregunta del usuario
+      addMessage(data.p, true);
+      
+      // Mostrar "escribiendo..."
+      const typingIndicator = showTypingIndicator();
+      
+      // Responder después de 1 segundo (simulando delay)
+      setTimeout(() => {
+        hideTypingIndicator();
+        addMessage(data.r, false);
+        speak(data.r);
+      }, 1000);
+    });
+
+    // Permitir usar Enter en el select
+    questionSelect.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        askButton.click();
+      }
+    });
+  </script>
+</body>
+</html>
